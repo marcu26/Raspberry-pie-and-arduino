@@ -148,6 +148,7 @@ void changeLedText(String text1, String text2)
 
 void pastreazaDistanta()
 {
+  angle=90;
   while(1)
   {
     String date="";
@@ -164,10 +165,6 @@ void pastreazaDistanta()
   String s="Dist: ";
   int dist=getDistance();
   s=s+String(dist);
-  if(date=="giveMe")
-  {
-    Serial.println(s+"\n");
-  }
   delay(100);
   if(dist>=100)
   {
