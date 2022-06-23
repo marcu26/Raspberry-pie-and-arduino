@@ -14,6 +14,10 @@ Ziua 5 - Am legat ecranul LCD si am facut functia de scriere pe ecran
 	   - In loop am pus ca servo-ul, pe care am montat senzorul de proximitate sa se roteasca pana da de un obiect la distanta de sub 100 de cm
 	   - In cazul in care gaseste, ia inputul de la telecomanda si il afiseaza pe LCD in hexa, alaturi de distanta
 
-Ziua 6 -
+Ziua 6 - Am implementat diferite functionalitati(joc reflex, pastreaza linistea, pastreaza distanta)
 
-Ziua 7 -
+Ziua 7 - Am implementat alte functionalitati (roll dice, 6 din 49)
+
+ziua 8 - Am primit raspberry si am facut un program de test al conexiunii
+
+ziua 9 - E lunga.. trebuie sa fac gui la app pe raspberry care o sa controleze arduino
