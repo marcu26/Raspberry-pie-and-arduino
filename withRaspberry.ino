@@ -1,6 +1,5 @@
 #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
-#include <IRremote.h>
 LiquidCrystal_I2C lcd(0x20,16,2);
 Servo capRobot; 
 
@@ -11,9 +10,6 @@ Servo capRobot;
 #define servoPin 5
 #define buttonPin 7
 const int micPin  = A0;
-
-int RECV_PIN=12; 
-IRrecv irrecv(RECV_PIN); 
 
 
 long duration;
@@ -26,9 +22,16 @@ int option=0;
 int buttonState = 0;  
 
 
+void setup() {
+  // put your setup code here, to run once:
+   Serial.begin(9600);
 
-void setup(){
-  Serial.begin(9600);
+     lcd.init();                      
+     lcd.backlight();
+    
+     lcd.home();
+
+       Serial.begin(9600);
 
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
@@ -48,17 +51,18 @@ void setup(){
 
   capRobot.attach(servoPin);
   capRobot.write(angle);
+ 
 
-
-  irrecv.enableIRIn(); 
 }
 
+void loop() {
+  // put your main code here, to run repeatedly:
 
+    showMenu();
   
-void loop()
-{
-  showMenu();
+
 }
+
 
 
 //############################# Distanta 
@@ -139,21 +143,6 @@ void changeLedText(String text1, String text2)
 
 //############################# 
 
-//############################# input telecomanda
-String getInput()
-{
-  String recived="";
-  delay(100);
-  if (irrecv.decode())
-  {
-  recived=String(irrecv.decodedIRData.decodedRawData, HEX);
-  irrecv.resume(); 
-  }
-  Serial.println(recived);
-  return recived;
-}
-//############################# 
-
 
 //############################# distanta cap
 
@@ -161,12 +150,24 @@ void pastreazaDistanta()
 {
   while(1)
   {
-  if(getInput()=="ad52ff00")
-  break;
+    String date="";
+   if(Serial.available() > 0)
+   {
+    date = Serial.readStringUntil('\n');
+  }
+  if(date=="exit")
+  {
+    break;
+  }
+
   
   String s="Dist: ";
   int dist=getDistance();
   s=s+String(dist);
+  if(date=="giveMe")
+  {
+    Serial.println(s+"\n");
+  }
   delay(100);
   if(dist>=100)
   {
@@ -192,6 +193,38 @@ void pastreazaDistanta()
 
 //############################# 
 
+//#############################  LINISTE
+void pastreazaLinistea()
+{
+  while(1)
+  {
+   String date="";
+   if(Serial.available() > 0)
+   {
+    date = Serial.readStringUntil('\n');
+  }
+  if(date=="exit")
+  {
+    break;
+  }
+  
+  int var=analogRead(micPin);
+  delay(200);
+  if(var>=85)
+  {
+  aprindeRosu();
+  changeLedText("E galagie!",String(var));
+  }
+  else {
+  aprindeVerde();
+  changeLedText("E liniste!",String(var));}
+  
+  }
+  showMenu(); 
+}
+//############################# 
+
+
 
 //############################# 
 
@@ -199,91 +232,46 @@ void showMenu()
 {
   capRobot.write(90);
   inchideLeduri();
- if(option==0)
- {
-   String input=getInput();
-   changeLedText("Pastreaza","Distanta >");
-   if(input=="e31cff00")
-   pastreazaDistanta();
-
-   if(input=="a55aff00")
+  String date; 
+  changeLedText("~  {}  ~","Wait for input");
+   if(Serial.available() > 0)
    {
-   option++;
-   }
+    date = Serial.readStringUntil('\n');
+    delay(100);
+  }
+  
+ if(date=="1")
+ {
+   pastreazaDistanta();
  }
 
-  if(option==1)
+  if(date=="2")
   {
-     String input=getInput();
-   changeLedText("Pastreaza","< Linistea >");
-   if(input=="e31cff00")
    pastreazaLinistea();
-
-   if(input=="a55aff00")
-   {
-   option++;
-   }
-
-   if(input=="f708ff00")
-   {
-    option--;
-   }
- 
   }
 
-  if(option==2)
+  if(date=="3")
   {
-     String input=getInput();
-    changeLedText("Joc","< Reflex >");
-    if(input=="e31cff00")
     jocReflex();
-   
-   if(input=="a55aff00"){
-   option++;
-   }
-
-   if(input=="f708ff00")
-   {
-    option--;
-   
-   }
   }
 
-   if(option==3)
+   if(date=="4")
   {
-     String input=getInput();
-    changeLedText("Roll","< Dice >");
-    if(input=="e31cff00")
+    
     rollDice();
-
-    if(input=="a55aff00"){
-      option++;
-     
-      }
-
-   if(input=="f708ff00")
-   {
-    option--;
-    
-   }
-    
   }
 
   
-   if(option==4)
+   if(date=="5")
   {
-    String input=getInput();
-    changeLedText("6","< Din 49 ");
-    if(input=="e31cff00")
-    {
       _6din49();
-    }
-
-   if(input=="f708ff00")
-   {
-    option--;
-   }
   }
+
+  if(date=="6")
+  {
+    moveServo();
+  }
+
 }
 
 //############################# 
@@ -315,6 +303,7 @@ void jocReflex()
     }
   }
   String scor=String(i);
+  Serial.println(String(i));
   changeLedText("Scor",scor);
   delay(2000);
   showMenu();
@@ -322,27 +311,6 @@ void jocReflex()
 
 //############################# 
 
-//#############################  LINISTE
-void pastreazaLinistea()
-{
-  while(1)
-  {
-  if(getInput()=="ad52ff00")
-  break;
-  int var=analogRead(micPin);
-  delay(200);
-  if(var>=85)
-  {
-  aprindeRosu();
-  changeLedText("E galagie!",String(var));
-  }
-  else {
-  aprindeVerde();
-   changeLedText("E liniste!",String(var));}
-  
-  }
-  showMenu(); 
-}
 //############################# 
 
 
@@ -374,38 +342,33 @@ void rollDice()
 {
   int nrZaruri=1;
   String s="";
-  int caz;
+  String date;
+
+  changeLedText("Wait for number","...");
+
 
   while(1)
   {
-  changeLedText("Nr zaruri:",String(nrZaruri));
-  String input=getInput();
-  if(input=="e31cff00"){
-  caz=0;
-  break;}
-
-  if(input=="e619ff00"){
-  caz=1;
-  break;}
-  
-
-  if(input=="a55aff00" && nrZaruri<6)
-  nrZaruri++;
-
-  if(input=="f708ff00" && nrZaruri>=2)
-  nrZaruri--;
-
+  if(Serial.available() > 0)
+  {
+  date  = Serial.readStringUntil('\n');
+  delay(100);
+ 
+  break;
   }
+  } 
+
+
    changeLedText("3...","");
    delay(1000);
    changeLedText("2...","");
     delay(1000);
    changeLedText("1...","");
     delay(1000);
+
+    nrZaruri=date.toInt();
    
 
-if(caz==0)
-{
   for(int i=0;i<nrZaruri-1;i++)
   {
    s=s+String(random(1,7))+" ";
@@ -414,27 +377,6 @@ if(caz==0)
    
    changeLedText("Rezultat: ",s);
    delay(2000);
-}
-
-if(caz==1)
-{
-
-   for(int i=0;i<nrZaruri-1;i++)
-  {
-   if(i%3!=0)
-   {
-   s=s+String(6)+" ";
-   }
-   else
-   {
-    s=s+String(5)+" ";
-   }
-  }
-   s=s+String(6);
-   
-   changeLedText("Rezultat: ",s);
-   delay(2000);
-}
 }
 
 //#############################
@@ -470,11 +412,7 @@ void _6din49()
 
 
 changeLedText(s1,s2);
-while(1)
-{
-  if(getInput()=="ad52ff00")
-  break;
-}
+delay(2000);
     
 }
 //#############################
@@ -491,3 +429,30 @@ bool existsnr(int v[6], int nr)
 }
 return 0;
 }
+
+
+//#############################
+
+void moveServo()
+{
+  while(1)
+  {
+  String date;
+ if(Serial.available() > 0)
+   {
+    date = Serial.readStringUntil('\n');
+    delay(100);
+    angle=date.toInt();
+    capRobot.write(angle);
+    changeLedText(date,"am primit");
+    int distance=getDistance();
+    Serial.println(String(distance));
+  }
+
+  if(date=="exit")
+  break;
+  }
+  }
+  
+
+//#############################

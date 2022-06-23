@@ -18,6 +18,11 @@ Ziua 6 - Am implementat diferite functionalitati(joc reflex, pastreaza linistea,
 
 Ziua 7 - Am implementat alte functionalitati (roll dice, 6 din 49)
 
-ziua 8 - Am primit raspberry si am facut un program de test al conexiunii
+ziua 8 - Am primit raspberry si am facut un program de test al conexiunii seriale (print in consola pe raspberry, print pe LCD la arduino)
 
-ziua 9 - E lunga.. trebuie sa fac gui la app pe raspberry care o sa controleze arduino
+ziua 9 - Pentru a programa pe raspberry am folosit putty (protocol: ssh)
+	   - Cu ajutorul biblotecii guizero am facut un mic user interface care ma ajuta sa controlez Arduino
+       - Am implementat o functionalitate noua: moveServo (trimit prin raspberry un unghi, iar Arduino returneaza distanta pana la senzorul de proximitate, pe care o afisez pe ecran)
+	   - proiect.ino = proiect vechi, doar arduino
+	   - withRaspberry.ino = proiect nou
+	   - proiect.py = aplicatia facuta pentru control arduino
