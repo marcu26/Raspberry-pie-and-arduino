@@ -43,7 +43,7 @@ ziua 8 - Am primit raspberry si am facut un program de test al conexiunii serial
 
 ziua 9 - Pentru a programa pe raspberry am folosit putty (protocol: ssh)
 
-	- Cu ajutorul biblotecii guizero am facut un mic user interface care ma ajuta sa controlez Arduino
+	   - Cu ajutorul biblotecii guizero am facut un mic user interface care ma ajuta sa controlez Arduino
 	
        - Am implementat o functionalitate noua: moveServo (trimit prin raspberry un unghi, iar Arduino returneaza distanta pana la senzorul de proximitate, pe care o afisez pe ecran)
        
@@ -52,3 +52,8 @@ ziua 9 - Pentru a programa pe raspberry am folosit putty (protocol: ssh)
 	   - withRaspberry.ino = proiect nou
 	   
 	   - proiect.py = aplicatia facuta pentru control arduino
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+ziua 10 - Am creat un script in python pentru a ma conecta prin ssh la raspberry si sa controlez motorul ca sa iau distanta pana la senzorul de proximitate de la arduino
+
